@@ -1,0 +1,27 @@
+version: '3'
+services:
+  frontend:
+    build: ./frontend
+    container_name: mern_frontend
+    restart: always
+
+  backend:
+    build: ./backend
+    container_name: mern_backend
+    restart: always
+    env_file:
+      - ./backend/.env
+
+  nginx:
+    image: nginx:alpine
+    container_name: mern_nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - frontend
+      - backend
+
+volumes:
+  mongo-data:
