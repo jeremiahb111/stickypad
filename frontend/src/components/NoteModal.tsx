@@ -7,15 +7,21 @@ import type { Note } from "@/pages/HomePage"
 
 const NoteModal = ({ setOpenModal, note }: { setOpenModal: React.Dispatch<React.SetStateAction<boolean>>, note: Note | null }) => {
   const [content, setContent] = useState<string>(note ? note.content : '')
-  const { createNote, isPending } = useCreateNote(setOpenModal)
-  const { updateNote } = useUpdateNoteById(setOpenModal)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+  const { createNote } = useCreateNote(() => setOpenModal(false))
+  const { updateNote } = useUpdateNoteById(() => setOpenModal(false))
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (note && content.trim() !== '') {
-      updateNote({ noteId: note._id, content })
-    } else {
-      createNote({ content })
+    setIsSubmitting(true)
+    try {
+      if (note && content.trim() !== '') {
+        await updateNote({ noteId: note._id, content })
+      } else {
+        await createNote({ content })
+      }
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -44,7 +50,7 @@ const NoteModal = ({ setOpenModal, note }: { setOpenModal: React.Dispatch<React.
           </div>
           <Button
             className="w-full cursor-pointer"
-            disabled={isPending || content.trim() === ''}
+            disabled={isSubmitting || content.trim() === ''}
             type="submit"
           >
             Submit

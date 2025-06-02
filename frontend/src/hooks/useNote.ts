@@ -34,15 +34,15 @@ export const useDeleteNoteById = () => {
   return { deleteNote, isPending }
 }
 
-export const useCreateNote = (setOpenModal: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const useCreateNote = (onSuccessCallback: () => void) => {
   const queryClient = useQueryClient()
 
-  const { mutate: createNote, isPending, isSuccess } = useMutation({
+  const { mutateAsync: createNote, isPending, isSuccess } = useMutation({
     mutationFn: api.note.createNote,
     onSuccess: () => {
       toast.success('Note created successfully!', { duration: 3000 })
       queryClient.invalidateQueries({ queryKey: ['notes'] })
-      setOpenModal(false)
+      onSuccessCallback()
     },
     onError: (error) => {
       const axiosError = error as AxiosError<{ message: string }>
@@ -54,14 +54,14 @@ export const useCreateNote = (setOpenModal: React.Dispatch<React.SetStateAction<
   return { createNote, isPending, isSuccess }
 }
 
-export const useUpdateNoteById = (setOpenModal: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const useUpdateNoteById = (onSuccessCallback: () => void) => {
   const queryClient = useQueryClient()
 
-  const { mutate: updateNote, isPending } = useMutation({
+  const { mutateAsync: updateNote, isPending } = useMutation({
     mutationFn: api.note.updateNoteById,
     onSuccess: () => {
       toast.success('Note updated successfully!', { duration: 3000 })
-      setOpenModal(false)
+      onSuccessCallback()
       queryClient.invalidateQueries({ queryKey: ['notes'] })
     },
     onError: (error) => {

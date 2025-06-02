@@ -15,7 +15,8 @@ export const useLoginMutation = () => {
       toast.success('Login successfully!', {
         duration: 3000
       })
-    }, onError: (error) => {
+    },
+    onError: (error) => {
       const axiosError = error as AxiosError<{ message: string }>
       toast.error(axiosError?.response?.data.message, {
         duration: 3000
