@@ -9,6 +9,7 @@ export const useGetNotes = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['notes'],
     queryFn: () => api.note.getNotes(),
+    retry: false,
     enabled: !!user
   })
 
